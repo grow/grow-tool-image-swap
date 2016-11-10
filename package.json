@@ -1,0 +1,12 @@
+{
+  "name": "grow-tool-image-swap",
+  "version": "0.0.1",
+  "description": "Grow UI Tool for temporarily image swapping.",
+  "main": "tool.js",
+  "repository": {
+    "url": "https://github.com/grow/grow-tool-image-swap.git",
+    "type": "git"
+  },
+  "author": "Randy Merrill <randy@blinkk.com>",
+  "license": "MIT"
+}
