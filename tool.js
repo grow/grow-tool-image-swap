@@ -23,7 +23,7 @@
       if (/img/i.test(target.element.tagName)) {
         target.type = 'img';
         break;
-      } else if (target.element.style.backgroundImage) {
+      } else if (target.element.style && target.element.style.backgroundImage) {
         target.type = 'background';
         break;
       }
