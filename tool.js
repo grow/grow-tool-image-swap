@@ -5,6 +5,7 @@
 
   var hasInitialized = false;
   var isActive = false;
+  var styleBackgroundRegex = /background(-image)?/i;
 
   var onDrop = function(e) {
     if (!isActive) {
@@ -13,25 +14,44 @@
 
     e.preventDefault();
 
+    var style;
     var target = {
       element: e.target,
       type: null
     };
 
-    // Check if the target has a related image.
     do {
+      // Check if the target is an image.
       if (/img/i.test(target.element.tagName)) {
         target.type = 'img';
         break;
-      } else if (target.element.style && target.element.style.backgroundImage) {
+      }
+
+      // Check for a background-image.
+      style = window.getComputedStyle(target.element, false);
+      if (style && style.backgroundImage != 'none') {
         target.type = 'background';
         break;
       }
 
-      target.element = target.element.parentNode;
-    } while (target.element);
+      // Check for a :after background-image.
+      style = window.getComputedStyle(target.element, '::after');
+      if (style && style.backgroundImage != 'none') {
+        target.type = 'after';
+        break;
+      }
 
-    if (!target) {
+      // Check for a :before background-image.
+      style = window.getComputedStyle(target.element, '::before');
+      if (style && style.backgroundImage != 'none') {
+        target.type = 'before';
+        break;
+      }
+
+      target.element = target.element.parentNode;
+    } while (target.element && target.element instanceof HTMLElement);
+
+    if (!target.element) {
       console.error('Unable to find a related image to replace.');
       return;
     }
@@ -60,6 +80,11 @@
       switch (target.type) {
         case 'img':
           target.element.src = fileResults.target.result;
+          break;
+        case 'after':
+        case 'before':
+          console.error(
+            'Cannot replace images that are part of pseduo selectors (ex: ::after or ::before).');
           break;
         case 'background':
           target.element.style.backgroundImage = 'url(' + fileResults.target.result + ')';
@@ -101,12 +126,14 @@
     isActive = !isActive;
 
     if (!hasInitialized) {
-      console.log('Initializing...');
+      hasInitialized = true;
+
       document.body.addEventListener("drop", onDrop);
       document.body.addEventListener("dragover", onDragOver);
       document.body.addEventListener("dragend", onDragEnd);
 
-      hasInitialized = true;
+      var notice = grow.ui.showNotice('Drag and drop new images to preview.');
+      notice.classList.add('grow_tool__image_swap__notice');
     }
   };
 
