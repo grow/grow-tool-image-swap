@@ -1,6 +1,6 @@
 {
   "name": "grow-tool-image-swap",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Grow UI Tool for temporarily image swapping.",
   "main": "tool.js",
   "repository": {
